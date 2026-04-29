@@ -1,0 +1,42 @@
+#include "Game.h"
+#include <iostream>
+using namespace std;
+
+Game::Game()
+    : players{ Player("Player 1", 'X'), Player("Player 2", 'O') },
+      currentPlayerIndex(0) {}
+
+const Player& Game::currentPlayer() const {
+    return players[currentPlayerIndex];
+}
+
+void Game::switchPlayer() {
+    currentPlayerIndex = 1 - currentPlayerIndex;
+}
+
+void Game::play() {
+    bool gameOver = false;
+
+    while (!gameOver) {
+        board.print();
+
+        int row, col;
+        currentPlayer().getMove(row, col);
+
+        if (!board.placeMarker(row, col, currentPlayer().getMarker()))
+            continue;
+
+        if (board.hasWon(currentPlayer().getMarker())) {
+            board.print();
+            cout << currentPlayer().getName() << " ("
+                 << currentPlayer().getMarker() << ") wins!\n";
+            gameOver = true;
+        } else if (board.isFull()) {
+            board.print();
+            cout << "The game is a tie!\n";
+            gameOver = true;
+        } else {
+            switchPlayer();
+        }
+    }
+}
